@@ -4,5 +4,5 @@ Creates a wordcloud with json files from downloading facebook data [here](https:
 
 ## TODO
 
-Add PIL support
-Other options when running
+* Add PIL support
+* Other options when running
