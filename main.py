@@ -2,7 +2,8 @@
 from ftfy import fix_text
 import matplotlib.pyplot as plt
 import os
-import wordcloud
+from wordcloud import WordCloud
+from tqdm import tqdm
 import json
 
 # Dict contains the text of each sender in a string, key being their name
@@ -22,9 +23,9 @@ def getParticipants(data):
         
 # Get the messages data from the JSON, if there is a URL, then we drop it
 # TODO: Only remove URL instead of dropping
-def getMessages(data):
+def getMessages(data, filename):
     messages = data["messages"]
-    for i in range(len(messages)):
+    for i in tqdm(range(len(messages)), desc=filename):
         if "content" in messages[i].keys():
             sender = fix_text(messages[i].get("sender_name"))
             content = fix_text(messages[i].get("content"))
@@ -32,8 +33,6 @@ def getMessages(data):
                 # Skip if there is an HTTP link, TODO: change to just remove the link
                 continue
             text[sender] += content + " "
-                
-            
 
 # Iterate through all the .json in the dir that it's run
 for filename in os.listdir("."):
@@ -41,6 +40,11 @@ for filename in os.listdir("."):
         data = parseJson(filename)
         if not bool(text):
             getParticipants(data)
-        getMessages(data)
-        print(text["Felix Rouleau"])
-        
+        getMessages(data, filename)
+
+
+for key in tqdm(text, desc = "WordCloud"):  
+    wordcloud = WordCloud().generate(text[key])
+    plt.imshow(wordcloud, interpolation="bilinear")
+    plt.axis("off")
+    plt.savefig(key+'.png', bbox_inches = "tight")
