@@ -29,7 +29,7 @@ def getMessages(data, filename):
         if "content" in messages[i].keys():
             sender = fix_text(messages[i].get("sender_name"))
             content = fix_text(messages[i].get("content"))
-            if "http" in content:
+            if ("http" or "attachment") in content:
                 # Skip if there is an HTTP link, TODO: change to just remove the link
                 continue
             text[sender] += content + " "
@@ -44,7 +44,13 @@ for filename in os.listdir("."):
 
 
 for key in tqdm(text, desc = "WordCloud"):  
-    wordcloud = WordCloud().generate(text[key])
+    wordcloud = WordCloud(width=3000, height=2000).generate(text[key])
     plt.imshow(wordcloud, interpolation="bilinear")
     plt.axis("off")
-    plt.savefig(key+'.png', bbox_inches = "tight")
+    plt.savefig(key+'.png', bbox_inches = "tight", dpi=300)
+    
+print("Creating cumulative wordcloud")
+fullWordCloud = WordCloud(width=3000, height=2000).generate("".join(text.values()))
+plt.imshow(fullWordCloud, interpolation="bilinear")
+plt.axis("off")
+plt.savefig("everyone.png", bbox_inches = "tight", dpi=300)
