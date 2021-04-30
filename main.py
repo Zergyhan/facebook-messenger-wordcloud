@@ -1,5 +1,6 @@
 # Import because of french stuff lol
 from ftfy import fix_text
+import matplotlib.pyplot as plt
 import os
 import wordcloud
 import json
@@ -7,7 +8,7 @@ import json
 # Dict contains the text of each sender in a string, key being their name
 text = {}
 
-# Open the file with .json as extention and return the data
+# Open the file with .json as extension and return the data
 def parseJson(filename):
     with open(filename, 'r') as f: 
         data = json.load(f)
@@ -24,7 +25,15 @@ def getParticipants(data):
 def getMessages(data):
     messages = data["messages"]
     for i in range(len(messages)):
-        continue
+        if "content" in messages[i].keys():
+            sender = fix_text(messages[i].get("sender_name"))
+            content = fix_text(messages[i].get("content"))
+            if "http" in content:
+                # Skip if there is an HTTP link, TODO: change to just remove the link
+                continue
+            text[sender] += content + " "
+                
+            
 
 # Iterate through all the .json in the dir that it's run
 for filename in os.listdir("."):
@@ -33,3 +42,5 @@ for filename in os.listdir("."):
         if not bool(text):
             getParticipants(data)
         getMessages(data)
+        print(text["Felix Rouleau"])
+        
