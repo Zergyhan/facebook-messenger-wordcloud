@@ -14,8 +14,12 @@ parser.add_argument("-s", "--stopwords", default="", help="Words, seperated by s
 parser.add_argument("--height", type=int, help="Integer value, the height of the resulting images, default is 2000", default=2000)
 parser.add_argument("--width", type=int, help="Integer value, the width of the resulting images, default is 3000", default=3000)
 args = parser.parse_args()
+
 # Dict contains the text of each sender in a string, key being their name
 text = {}
+
+# Get the new list of words and add them to the stopwords
+stopwordsNew = args.stopwords.split() + list(STOPWORDS)
 
 # Open the file with .json as extension and return the data
 def parseJson(filename):
@@ -42,7 +46,14 @@ def getMessages(data, filename):
                 continue
             text[sender] += content + " "
 
-# Iterate through all the .json in the dir that it's run
+# Create a cloud with the same values
+def createCloud(words, name):
+    wordcloud = WordCloud(width=args.width, height=args.height).generate(words, stopwords=stopwordsNew)
+    plt.imshow(wordcloud, interpolation="bilinear")
+    plt.axis("off")
+    plt.savefig(name+'.png', bbox_inches = "tight", dpi=300)
+
+# Iterate through all the .json in the dir
 for filename in os.listdir("."):
     if filename.endswith(".json"): 
         data = parseJson(filename)
@@ -50,17 +61,10 @@ for filename in os.listdir("."):
             getParticipants(data)
         getMessages(data, filename)
 
-# Get the new list of words and add them to the stopwords
-stopwordsNew = args.stopwords.split() + list(STOPWORDS)
-
+# Create a wordcloud for every sender
 for key in tqdm(text, desc = "WordCloud"):  
-    wordcloud = WordCloud(width=args.width, height=args.height).generate(text[key], stopwords=stopwordsNew)
-    plt.imshow(wordcloud, interpolation="bilinear")
-    plt.axis("off")
-    plt.savefig(key+'.png', bbox_inches = "tight", dpi=300)
-    
-print("Creating cumulative wordcloud")
-fullWordCloud = WordCloud(width=args.width, height=args.height).generate("".join(text.values()))
-plt.imshow(fullWordCloud, interpolation="bilinear")
-plt.axis("off")
-plt.savefig("everyone.png", bbox_inches = "tight", dpi=300)
+    createCloud(text[key], key)
+
+# Wordcloud for the group chat
+print("Creating Chat Wordcloud")
+createCloud("".join(text.values()), "everyone")
