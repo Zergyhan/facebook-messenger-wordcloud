@@ -1,7 +1,8 @@
-# facebook-messenger-wordcloud
+# Facebook Messenger Wordcloud
 
-Creates a wordcloud with json files from downloading facebook data.
+Creates a wordcloud with json files from downloading facebook data [here](https://www.facebook.com/dyi/?referrer=yfi_settings "Download Your Information").
 
 ## TODO
 
-Finish it lol
+Add PIL support
+Other options when running
