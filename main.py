@@ -11,6 +11,8 @@ import argparse
 parser = argparse.ArgumentParser(description="Create a wordcloud out of the .json that you receive from Facebook Messenger.")
 parser.add_argument("-s", "--stopwords", default="", help="Words, seperated by space, which will be ignored when making the wordcloud. " 
                     "Can take a .txt as an input.")
+parser.add_argument("--height", type=int, help="Integer value, the height of the resulting images, default is 2000", default=2000)
+parser.add_argument("--width", type=int, help="Integer value, the width of the resulting images, default is 3000", default=3000)
 args = parser.parse_args()
 # Dict contains the text of each sender in a string, key being their name
 text = {}
@@ -48,16 +50,17 @@ for filename in os.listdir("."):
             getParticipants(data)
         getMessages(data, filename)
 
-stopwordsNew = list(STOPWORDS)
+# Get the new list of words and add them to the stopwords
+stopwordsNew = args.stopwords.split() + list(STOPWORDS)
 
 for key in tqdm(text, desc = "WordCloud"):  
-    wordcloud = WordCloud(width=3000, height=2000).generate(text[key])
+    wordcloud = WordCloud(width=args.width, height=args.height).generate(text[key], stopwords=stopwordsNew)
     plt.imshow(wordcloud, interpolation="bilinear")
     plt.axis("off")
     plt.savefig(key+'.png', bbox_inches = "tight", dpi=300)
     
 print("Creating cumulative wordcloud")
-fullWordCloud = WordCloud(width=3000, height=2000).generate("".join(text.values()))
+fullWordCloud = WordCloud(width=args.width, height=args.height).generate("".join(text.values()))
 plt.imshow(fullWordCloud, interpolation="bilinear")
 plt.axis("off")
 plt.savefig("everyone.png", bbox_inches = "tight", dpi=300)
