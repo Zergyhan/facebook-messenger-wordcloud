@@ -53,18 +53,20 @@ def createCloud(words, name):
     plt.axis("off")
     plt.savefig(name+'.png', bbox_inches = "tight", dpi=300)
 
-# Iterate through all the .json in the dir
-for filename in os.listdir("."):
-    if filename.endswith(".json"): 
-        data = parseJson(filename)
-        if not bool(text):
-            getParticipants(data)
-        getMessages(data, filename)
 
-# Create a wordcloud for every sender
-for key in tqdm(text, desc = "WordCloud"):  
-    createCloud(text[key], key)
+if __name__ == "__main__":
+    # Iterate through all the .json in the dir
+    for filename in os.listdir("."):
+        if filename.endswith(".json"): 
+            data = parseJson(filename)
+            if not bool(text):
+                getParticipants(data)
+            getMessages(data, filename)
 
-# Wordcloud for the group chat
-print("Creating Chat Wordcloud")
-createCloud("".join(text.values()), "everyone")
+    # Create a wordcloud for every sender
+    for key in tqdm(text, desc = "WordCloud"):  
+        createCloud(text[key], key)
+
+    # Wordcloud for the group chat
+    print("Creating Chat Wordcloud")
+    createCloud("".join(text.values()), "everyone")
