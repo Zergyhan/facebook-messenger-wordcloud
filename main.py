@@ -27,7 +27,7 @@ def parseJson(filename):
         data = json.load(f)
         return data
     
-# Get the participants from the JSON file and make dicts out of it
+# Get the participants from the JSON file and make dicts out of it, not sure if it's needed
 def getParticipants(data):
     participants = data["participants"]
     for i in range(len(participants)):
