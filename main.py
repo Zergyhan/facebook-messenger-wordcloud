@@ -2,10 +2,16 @@
 from ftfy import fix_text
 import matplotlib.pyplot as plt
 import os
-from wordcloud import WordCloud
+from wordcloud import WordCloud, STOPWORDS
 from tqdm import tqdm
 import json
+import argparse
 
+# Parse arguments
+parser = argparse.ArgumentParser(description="Create a wordcloud out of the .json that you receive from Facebook Messenger.")
+parser.add_argument("-s", "--stopwords", default="", help="Words, seperated by space, which will be ignored when making the wordcloud. " 
+                    "Can take a .txt as an input.")
+args = parser.parse_args()
 # Dict contains the text of each sender in a string, key being their name
 text = {}
 
@@ -42,6 +48,7 @@ for filename in os.listdir("."):
             getParticipants(data)
         getMessages(data, filename)
 
+stopwordsNew = list(STOPWORDS)
 
 for key in tqdm(text, desc = "WordCloud"):  
     wordcloud = WordCloud(width=3000, height=2000).generate(text[key])
